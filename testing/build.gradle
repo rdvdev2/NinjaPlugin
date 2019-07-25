@@ -1,0 +1,48 @@
+buildscript {
+    repositories {
+        maven {
+            url = uri("repo")
+        }
+    }
+    dependencies {
+        classpath 'tk.rdvdev2:NinjaPlugin:1.0'
+    }
+}
+apply plugin: 'tk.rdvdev2.ninjaplugin'
+
+wrapper {
+    gradleVersion '5.5.1'
+}
+
+ninja {
+    sourceSets {
+        bootloader {
+            includeInMaster = false
+        }
+        main {
+            pools {
+                mypool {
+                    depth = 1
+                }
+            }
+            rules {
+                cc {
+                    command = 'echo From $in to $out'
+                    description = 'echoing'
+                    pool = 'mypool'
+                }
+            }
+            addBuild {
+                rulename = 'cc'
+                inputs = files('src/main/c/main.c')
+                outputs = files('src/main/c/main.o')
+            }
+            addComment('This is a test file and really makes no sense')
+            defaultArtifacts.add(files('src/main/c/main.o').files.join(" "))
+            addReference('subninja', layout.buildDirectory.file('ninja/buildfiles/bootloader.ninja').get())
+            variables {
+                helloworld{value='true'}
+            }
+        }
+    }
+}

@@ -1,0 +1,31 @@
+plugins {
+    id 'groovy'
+    id 'maven-publish'
+}
+
+group 'tk.rdvdev2'
+version '1.0'
+
+wrapper {
+    gradleVersion '5.5.1'
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+}
+
+publishing {
+    publications {
+        ninjaplugin(MavenPublication) {
+            artifact jar
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'test-repo'
+            url = "file://${file('testing/repo')}"
+        }
+    }
+}
